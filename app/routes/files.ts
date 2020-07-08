@@ -162,7 +162,7 @@ export class FilesRouter {
             return res.status(200).send();
         }));
 
-        /***** Delete a specificc version of a file *****/
+        /***** Delete a specific version of a file *****/
         this.router.delete("/:id/versions/:version", this.wrapAsync(async (req: Request, res: Response) => {
             const file = await this.getFileInfoWithVersion(req.params.id, req.params.version);
 
