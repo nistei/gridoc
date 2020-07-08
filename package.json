@@ -13,7 +13,7 @@
     "url": "git+https://github.com/nistei/gridoc.git"
   },
   "author": "StoneLabs",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/nistei/gridoc/issues"
   },
