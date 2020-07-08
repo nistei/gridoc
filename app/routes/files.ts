@@ -5,6 +5,7 @@ import Grid from "gridfs-stream";
 import {File, FileQuerySchema, IFile} from "../models/file";
 import * as logger from "winston";
 import mongoose = require("mongoose");
+import {NotFoundException} from "../exceptions/exceptions";
 
 export class FilesRouter {
 
@@ -33,7 +34,7 @@ export class FilesRouter {
             const file = await this.getNewestFileInfo(req.params.id);
 
             if (!file) {
-                return res.status(404).send();
+                throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
             }
 
             const readStream = this.gfs.createReadStream({
@@ -49,7 +50,7 @@ export class FilesRouter {
             const file = await this.getNewestFileInfo(req.params.id);
 
             if (!file) {
-                return res.status(404).send();
+                throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
             }
 
             return res.json(file);
@@ -60,7 +61,7 @@ export class FilesRouter {
             const current = await this.getNewestFileInfo(req.params.id);
 
             if (!current) {
-                return res.status(404).send();
+                throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
             }
 
             req.querymen.query["metadata.fileId"] = req.params.id
@@ -77,7 +78,7 @@ export class FilesRouter {
             const file = await this.getFileInfoWithVersion(req.params.id, req.params.version);
 
             if (!file) {
-                return res.status(404).send();
+                throw new NotFoundException(`Version with fileId '${req.params.id}' and version '${req.params.version}' not found`);
             }
 
             const readStream = this.gfs.createReadStream({
@@ -93,7 +94,7 @@ export class FilesRouter {
             const file = await this.getFileInfoWithVersion(req.params.id, req.params.version);
 
             if (!file) {
-                return res.status(404).send();
+                throw new NotFoundException(`Version with fileId '${req.params.id}' and version '${req.params.version}' not found`);
             }
 
             return res.json(file);
@@ -104,7 +105,7 @@ export class FilesRouter {
             const oldVersion = await this.getNewestFileInfo(req.params.id);
 
             if (!oldVersion) {
-                return res.status(404).send();
+                throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
             }
 
             const newVersion = ++oldVersion.metadata.version;
@@ -148,7 +149,7 @@ export class FilesRouter {
             const current = await this.getNewestFileInfo(req.params.id);
 
             if (!current) {
-                return res.status(404).send();
+                throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
             }
 
             const all = await File.find({"metadata.fileId": req.params.id}).exec();
@@ -169,7 +170,7 @@ export class FilesRouter {
             const file = await this.getFileInfoWithVersion(req.params.id, req.params.version);
 
             if (!file) {
-                return res.status(404).send();
+                throw new NotFoundException(`Version with fileId '${req.params.id}' and version '${req.params.version}' not found`);
             }
 
             this.gfs.remove({_id: file._id, root: 'uploads'}, err => {
