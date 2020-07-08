@@ -1,0 +1,42 @@
+{
+  "name": "gridoc",
+  "version": "0.0.1",
+  "description": "Gridoc is a MongoDB GridFS based content management system with file versioning.",
+  "main": "index.js",
+  "scripts": {
+    "tsc": "tsc",
+    "dev": "ts-node-dev --respawn --transpileOnly ./app/server.ts",
+    "prod": "tsc && node ./build/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nistei/gridoc.git"
+  },
+  "author": "StoneLabs",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nistei/gridoc/issues"
+  },
+  "homepage": "https://github.com/nistei/gridoc#readme",
+  "dependencies": {
+    "@types/node": "^14.0.13",
+    "connect-busboy": "0.0.2",
+    "express": "^4.17.1",
+    "express-healthcheck": "^0.1.0",
+    "express-winston": "^4.0.3",
+    "gridfs-stream": "^1.1.1",
+    "mongoose": "^5.9.18",
+    "querymen": "^2.1.4",
+    "winston": "^3.3.3"
+  },
+  "devDependencies": {
+    "@types/connect-busboy": "0.0.2",
+    "@types/express": "^4.17.6",
+    "@types/gridfs-stream": "^0.5.33",
+    "@types/mongoose": "^5.7.24",
+    "nodemon": "^2.0.4",
+    "ts-node": "^8.10.2",
+    "ts-node-dev": "^1.0.0-pre.44",
+    "typescript": "^3.9.5"
+  }
+}
