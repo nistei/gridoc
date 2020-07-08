@@ -35,6 +35,47 @@ const schema = new Schema({
 }, {strict: false});
 
 const querySchema: QuerySchema = {
+    filename: String,
+    filenameRegex: RegExp,
+    contentType: String,
+    version: {
+        type: Number,
+        paths: ["metadata.version"]
+    },
+    fileId: {
+        type: [String],
+        paths: ["metadata.fileId"]
+    },
+    lengthLte: {
+        type: Number,
+        paths: ["length"],
+        operator: "$lte"
+    },
+    lengthGte: {
+        type: Number,
+        paths: ["length"],
+        operator: "$gte"
+    },
+    uploadedBefore: {
+        type: Date,
+        paths: ["uploadDate"],
+        operator: "$lte"
+    },
+    uploadedAfter: {
+        type: Date,
+        paths: ["uploadDate"],
+        operator: "$gte"
+    },
+    versionGte: {
+        type: Number,
+        paths: ["metadata.version"],
+        operator: "$gte"
+    },
+    versionLte: {
+        type: Number,
+        paths: ["metadata.version"],
+        operator: "$gte"
+    }
 };
 
 export const File = mongoose.model<IFile>("File", schema, 'uploads.files') as IFileModel;
