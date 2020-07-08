@@ -36,10 +36,13 @@ const schema = new Schema({
 
 const querySchema: QuerySchema = {
     filename: String,
-    filenameRegex: RegExp,
-    contentType: String,
+    filenameRegex: {
+        type: RegExp,
+        paths: ["filename"]
+    },
+    contentType: [String],
     version: {
-        type: Number,
+        type: [Number],
         paths: ["metadata.version"]
     },
     fileId: {
@@ -74,7 +77,7 @@ const querySchema: QuerySchema = {
     versionLte: {
         type: Number,
         paths: ["metadata.version"],
-        operator: "$gte"
+        operator: "$lte"
     }
 };
 

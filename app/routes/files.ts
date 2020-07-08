@@ -56,18 +56,20 @@ export class FilesRouter {
         }));
 
         /***** Get all versions of one file *****/
-        this.router.get("/:id/versions", this.wrapAsync(async (req: Request, res: Response) => {
+        this.router.get("/:id/versions", query(FileQuerySchema), this.wrapAsync(async (req: any, res: Response) => {
             const current = await this.getNewestFileInfo(req.params.id);
 
             if (!current) {
                 return res.status(404).send();
             }
 
-            const all = await File.find({"metadata.fileId": req.params.id})
-                .sort('-metadata.version')
-                .exec();
+            req.querymen.query["metadata.fileId"] = req.params.id
+            const all = await File.find(req.querymen.query, req.querymen.select, req.querymen.cursor).exec();
 
-            res.json({current: current, all: all});
+            res.json({
+                meta: req.querymen.cursor,
+                current: current,
+                all: all});
         }));
 
         /***** Get a specific version of one file *****/
