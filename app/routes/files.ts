@@ -31,7 +31,7 @@ export class FilesRouter {
 
         /***** Get one file by File ID *****/
         this.router.get("/:id", this.wrapAsync(async (req: Request, res: Response) => {
-            const file = await this.getNewestFileInfo(req.params.id);
+            const file = await File.findNewestInfoByFileId(req.params.id);
 
             if (!file) {
                 throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
@@ -47,7 +47,7 @@ export class FilesRouter {
 
         /***** Get info for the newest version of a file *****/
         this.router.get("/:id/info", this.wrapAsync(async (req: Request, res: Response) => {
-            const file = await this.getNewestFileInfo(req.params.id);
+            const file = await File.findNewestInfoByFileId(req.params.id);
 
             if (!file) {
                 throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
@@ -58,7 +58,7 @@ export class FilesRouter {
 
         /***** Get all versions of one file *****/
         this.router.get("/:id/versions", query(FileQuerySchema), this.wrapAsync(async (req: any, res: Response) => {
-            const current = await this.getNewestFileInfo(req.params.id);
+            const current = await File.findNewestInfoByFileId(req.params.id);
 
             if (!current) {
                 throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
@@ -75,7 +75,7 @@ export class FilesRouter {
 
         /***** Get a specific version of one file *****/
         this.router.get("/:id/versions/:version", this.wrapAsync(async (req: Request, res: Response) => {
-            const file = await this.getFileInfoWithVersion(req.params.id, req.params.version);
+            const file = await File.findNewestInfoByFileIdAndVersion(req.params.id, req.params.version);
 
             if (!file) {
                 throw new NotFoundException(`Version with fileId '${req.params.id}' and version '${req.params.version}' not found`);
@@ -91,7 +91,7 @@ export class FilesRouter {
 
         /***** Get info for a specific version of one file *****/
         this.router.get("/:id/versions/:version/info", this.wrapAsync(async (req: Request, res: Response) => {
-            const file = await this.getFileInfoWithVersion(req.params.id, req.params.version);
+            const file = await File.findNewestInfoByFileIdAndVersion(req.params.id, req.params.version);
 
             if (!file) {
                 throw new NotFoundException(`Version with fileId '${req.params.id}' and version '${req.params.version}' not found`);
@@ -102,7 +102,7 @@ export class FilesRouter {
 
         /***** Create a new version of a file *****/
         this.router.put("/:id", this.wrapAsync(async (req: Request, res: Response) => {
-            const oldVersion = await this.getNewestFileInfo(req.params.id);
+            const oldVersion = await File.findNewestInfoByFileId(req.params.id);
 
             if (!oldVersion) {
                 throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
@@ -146,7 +146,7 @@ export class FilesRouter {
 
         /***** Delete a file *****/
         this.router.delete("/:id", this.wrapAsync(async (req: Request, res: Response) => {
-            const current = await this.getNewestFileInfo(req.params.id);
+            const current = await File.findNewestInfoByFileId(req.params.id);
 
             if (!current) {
                 throw new NotFoundException(`File with fileId '${req.params.id}' not found`);
@@ -167,7 +167,7 @@ export class FilesRouter {
 
         /***** Delete a specific version of a file *****/
         this.router.delete("/:id/versions/:version", this.wrapAsync(async (req: Request, res: Response) => {
-            const file = await this.getFileInfoWithVersion(req.params.id, req.params.version);
+            const file = await File.findNewestInfoByFileIdAndVersion(req.params.id, req.params.version);
 
             if (!file) {
                 throw new NotFoundException(`Version with fileId '${req.params.id}' and version '${req.params.version}' not found`);
@@ -224,38 +224,5 @@ export class FilesRouter {
         }));
 
         return this.router;
-    }
-
-    private async getNewestFileInfo(fileId: string): Promise<IFile> {
-        return new Promise<IFile>(async (resolve, reject) => {
-            logger.info("Looking for file with fileId", {id: fileId});
-            const fileMeta = await File.findOne({'metadata.fileId': fileId})
-                .sort('-metadata.version')
-                .exec();
-
-            if (!fileMeta) {
-                logger.error("File not found", {FileId: fileId});
-                return resolve(undefined);
-            }
-
-            logger.info("Found file", {file: fileMeta});
-            return resolve(fileMeta);
-        });
-    }
-
-    private async getFileInfoWithVersion(fileId: string, version: string): Promise<IFile> {
-        return new Promise<IFile>(async (resolve, reject) => {
-            logger.info("Looking for file with fileId and version", {fileId, version});
-            const fileMeta = await File.findOne({"metadata.fileId": fileId, "metadata.version": version})
-                .exec();
-
-            if (!fileMeta) {
-                logger.error("File not found", {fileId, version});
-                return resolve(undefined);
-            }
-
-            logger.info("Found file", {file: fileMeta});
-            return resolve(fileMeta);
-        });
     }
 }

@@ -19,6 +19,8 @@ export interface IFileMeta {
 }
 
 export interface IFileModel extends Model<IFile> {
+    findNewestInfoByFileId(id: string): Promise<IFile>
+    findNewestInfoByFileIdAndVersion(id: string, version: string): Promise<IFile>
 }
 
 const schema = new Schema({
@@ -33,6 +35,14 @@ const schema = new Schema({
         fileId: Schema.Types.ObjectId
     }
 }, {strict: false});
+
+schema.statics.findNewestInfoByFileId = function (id: string) {
+    return this.findOne({'metadata.fileId': id}).sort('-metadata.version');
+};
+
+schema.statics.findNewestInfoByFileIdAndVersion = function (id: string, version: string) {
+    return this.findOne({"metadata.fileId": id, "metadata.version": version});
+};
 
 const querySchema: QuerySchema = {
     filename: String,
